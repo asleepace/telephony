@@ -13,6 +13,7 @@ class IncomingCallObserver: NSObject, CXCallObserverDelegate, ObservableObject {
     
     @Published var call: CXCall?
     @Published var status: String = "No active call"
+    @Published var history: [CXCall] = []
     
     override init() {
         self.myCallObserver = CXCallObserver()
@@ -24,6 +25,12 @@ class IncomingCallObserver: NSObject, CXCallObserverDelegate, ObservableObject {
         print("[IncomingCallObserver] observer: \(callObserver)")
         print("[IncomingCallObserver] call: \(call)")
         self.call = call
+        self.history.append(call)
+        print("[IncomingCallObserver] call uuid: \(call.uuid)")
+        print("[IncomingCallObserver] call description: \(call.description)")
+        print("[IncomingCallObserver] call hasConnected: \(call.hasConnected)")
+        print("[IncomingCallObserver] call isOutgoing: \(call.isOutgoing)")
+        print("[IncomingCallObserver] call isOnHold: \(call.isOnHold)")
     }
 }
 

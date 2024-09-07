@@ -46,6 +46,16 @@ struct ContentView: View {
                         InfoRow(title: "Has Connected", value: call.hasConnected ? "Yes" : "No")
                     }
                 }
+                
+                Section(header: Text("Call Information")) {
+                    InfoRow(title: "Call Status", value: callObserver.status)
+                    if let call = callObserver.call {
+                        InfoRow(title: "Call UUID", value: call.uuid.uuidString)
+                        InfoRow(title: "Is Outgoing", value: call.isOutgoing ? "Yes" : "No")
+                        InfoRow(title: "Has Ended", value: call.hasEnded ? "Yes" : "No")
+                        InfoRow(title: "Has Connected", value: call.hasConnected ? "Yes" : "No")
+                    }
+                }
             }
             .listStyle(GroupedListStyle())
             .navigationTitle("Telephony Info")
