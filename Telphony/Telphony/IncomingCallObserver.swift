@@ -6,6 +6,25 @@
 //
 
 import CallKit
+import SwiftUI
+
+struct CallHistory: Identifiable {
+    var id: UUID
+    let uuid: UUID
+    let createdAt: Date
+    let updatedAt: Date
+    let status: String
+    let isOutgoing: Bool
+    init(_ call: CXCall) {
+        self.id = call.uuid
+        self.uuid = call.uuid
+        self.createdAt = Date.now
+        self.updatedAt = Date.now
+        self.status = call.description
+        self.isOutgoing = call.isOutgoing
+    }
+}
+
 
 class IncomingCallObserver: NSObject, CXCallObserverDelegate, ObservableObject {
     
@@ -13,7 +32,7 @@ class IncomingCallObserver: NSObject, CXCallObserverDelegate, ObservableObject {
     
     @Published var call: CXCall?
     @Published var status: String = "No active call"
-    @Published var history: [CXCall] = []
+    @Published var history: [CallHistory] = []
     
     override init() {
         self.myCallObserver = CXCallObserver()
@@ -25,12 +44,16 @@ class IncomingCallObserver: NSObject, CXCallObserverDelegate, ObservableObject {
         print("[IncomingCallObserver] observer: \(callObserver)")
         print("[IncomingCallObserver] call: \(call)")
         self.call = call
-        self.history.append(call)
+        self.addCallToHistory(call)
         print("[IncomingCallObserver] call uuid: \(call.uuid)")
         print("[IncomingCallObserver] call description: \(call.description)")
         print("[IncomingCallObserver] call hasConnected: \(call.hasConnected)")
         print("[IncomingCallObserver] call isOutgoing: \(call.isOutgoing)")
         print("[IncomingCallObserver] call isOnHold: \(call.isOnHold)")
+    }
+    
+    func addCallToHistory(_ call: CXCall) {
+        self.history.append(CallHistory(call))
     }
 }
 

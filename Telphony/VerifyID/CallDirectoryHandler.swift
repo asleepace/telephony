@@ -14,6 +14,21 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
         print("[VerifyID] begin request with context: \(context.debugDescription)")
         
         context.delegate = self
+        
+        // Custom identifying request details
+        //
+        // Because the system calls this method only when it launches the app extension and not for each individual call,
+        // you need to specify call identification information all at once. For example, you can’t make a request to a
+        // web service to find information about an incoming call.
+        //
+        // https://developer.apple.com/documentation/callkit/identifying-and-blocking-calls
+        //
+        let labelsKeyedByPhoneNumber: [CXCallDirectoryPhoneNumber: String] = [:]
+        
+        for (phoneNumber, label) in labelsKeyedByPhoneNumber.sorted(by: <) {
+            context.addIdentificationEntry(withNextSequentialPhoneNumber: phoneNumber, label: label)
+        }
+        
 
         // Check whether this is an "incremental" data request. If so, only provide the set of phone number blocking
         // and identification entries which have been added or removed since the last time this extension's data was loaded.
@@ -21,11 +36,9 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
         // and identification phone numbers if the request is not incremental.
         if context.isIncremental {
             addOrRemoveIncrementalBlockingPhoneNumbers(to: context)
-
             addOrRemoveIncrementalIdentificationPhoneNumbers(to: context)
         } else {
             addAllBlockingPhoneNumbers(to: context)
-
             addAllIdentificationPhoneNumbers(to: context)
         }
 

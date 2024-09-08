@@ -22,6 +22,7 @@ struct InfoRow: View {
 
 struct ContentView: View {
     
+    @State private var callHandler = HandleCalls()
     @State private var callObserver = IncomingCallObserver()
     @State private var carrierInfo = getCarrierInfo()
     
@@ -47,18 +48,17 @@ struct ContentView: View {
                     }
                 }
                 
-                Section(header: Text("Call Information")) {
-                    InfoRow(title: "Call Status", value: callObserver.status)
-                    if let call = callObserver.call {
-                        InfoRow(title: "Call UUID", value: call.uuid.uuidString)
-                        InfoRow(title: "Is Outgoing", value: call.isOutgoing ? "Yes" : "No")
-                        InfoRow(title: "Has Ended", value: call.hasEnded ? "Yes" : "No")
-                        InfoRow(title: "Has Connected", value: call.hasConnected ? "Yes" : "No")
+                Section(header: Text("History")) {
+                    ForEach(callObserver.history) { call in
+                        InfoRow(title: call.id.uuidString, value: call.createdAt.formatted())
                     }
                 }
             }
             .listStyle(GroupedListStyle())
             .navigationTitle("Telephony Info")
+            .onAppear {
+                self.callHandler.requestPermissions()
+            }
         }
     }
 }
